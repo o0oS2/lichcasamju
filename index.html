@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>Lịch Âm</title>
-<meta name="description" content="Lịch âm Việt Nam — xem ngày âm, ngày lễ, can chi theo từng ngày.">
+<title>Lịch Samju</title>
+<meta name="description" content="Lịch Samju — xem ngày âm, ngày lễ, can chi theo từng ngày.">
 <meta name="theme-color" content="#FAF6EE">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Lịch Âm">
+<meta name="apple-mobile-web-app-title" content="Lịch Samju">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="icon" href="icons/icon-192.png">
@@ -18,10 +18,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,340;9..144,480;9..144,600&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #FAF6EE;
-    --bg-soft: #F2ECDD;
+    --bg: #F6F6F4;
+    --bg-soft: #ECECE8;
     --surface: #FFFFFF;
-    --surface-2: #F1ECDF;
+    --surface-2: #F1F1EE;
+    --glass: rgba(255,255,255,0.66);
+    --glass-border: rgba(255,255,255,0.8);
     --gold: #B8863C;
     --gold-dim: #8C6529;
     --text: #2A2620;
@@ -34,14 +36,15 @@
     --radius: 20px;
     color-scheme: light;
 
-    /* Ca làm việc: Ca Ngày = ô kem sáng, Ca Đêm = ô xanh oải hương nhạt */
-    --shift-day-bg: #F3E7C7;
-    --shift-day-bg-strong: #E9D6A4;
+    /* Ca làm việc: Ca Ngày = ô vàng hổ phách rõ nét, Ca Đêm = ô xanh oải hương nhạt */
+    --shift-day-bg: #F6DFA1;
+    --shift-day-bg-strong: #EACB78;
+    --shift-day-border: rgba(140,101,41,0.35);
     --shift-night-bg: #E1E3F6;
     --shift-night-bg-strong: #CDD1EE;
-    --shift-day-ink: var(--text);
-    --shift-day-ink-dim: var(--text-dim);
-    --shift-day-gold: var(--gold);
+    --shift-day-ink: #6B4A18;
+    --shift-day-ink-dim: #8C6529;
+    --shift-day-gold: #8C6529;
     --shift-day-red: var(--accent-red);
     --shift-day-holiday: var(--holiday);
     --select-ring: #2A2620;
@@ -65,7 +68,8 @@
     display:flex;
     justify-content:center;
     background:
-      radial-gradient(ellipse 700px 400px at 50% -10%, var(--surface-2) 0%, transparent 60%),
+      radial-gradient(ellipse 900px 500px at 50% -10%, #FFFFFF 0%, transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 100%, rgba(184,134,60,0.06) 0%, transparent 55%),
       var(--bg);
   }
 
@@ -168,6 +172,21 @@
     font-size: 12.5px;
   }
 
+  .nav-buttons .nav-btn.shift-btn{
+    width: auto;
+    padding: 0 12px 0 10px;
+    border-radius: 16px;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .nav-buttons .nav-btn.shift-btn.active{
+    color: var(--holiday);
+    border-color: var(--holiday);
+    background: color-mix(in srgb, var(--holiday) 16%, var(--surface));
+  }
+
   .lunar-month-caption .nav-btn.goto-btn{
     width: auto;
     padding: 0 11px 0 9px;
@@ -179,25 +198,6 @@
     white-space: nowrap;
   }
   .goto-btn-label{ line-height:1; }
-
-  .lunar-month-caption .nav-btn.shift-btn{
-    width: auto;
-    padding: 0 11px 0 9px;
-    border-radius: 14px;
-    gap: 5px;
-    font-size: 12.5px;
-    font-weight: 500;
-    color: var(--text);
-    white-space: nowrap;
-  }
-  .lunar-month-caption .nav-btn.shift-btn svg{ width:13px; height:13px; }
-  .lunar-month-caption .nav-btn.shift-btn.active{
-    color: var(--holiday);
-    border-color: var(--holiday);
-    background: var(--surface-2);
-    background: color-mix(in srgb, var(--holiday) 16%, var(--surface));
-  }
-  .shift-btn-label{ line-height:1; }
 
   /* ---------- Calendar ---------- */
   .weekday-row{
@@ -260,14 +260,18 @@
   .day-cell.sunday .solar{ color: var(--accent-red); }
   .day-cell.off-day .solar{ color: var(--accent-red); }
 
-  .day-cell.today .solar{ color: #fff; font-weight: 700; }
-  .day-cell.today .lunar{ color: rgba(255,255,255,0.78); }
+  .day-cell.today .solar{ color: var(--gold-dim); font-weight: 700; }
+  .day-cell.today .lunar{ color: var(--gold); }
 
   .day-cell.first-day .lunar{ color: var(--gold); font-weight: 700; }
   .day-cell.full-moon .lunar{ color: var(--gold); font-weight: 700; }
 
+  .day-cell.today{ box-shadow: inset 0 0 0 2px var(--gold); }
   .day-cell.selected:not(.today){
     box-shadow: inset 0 0 0 2px var(--select-ring);
+  }
+  .day-cell.today.selected{
+    box-shadow: inset 0 0 0 2px var(--select-ring), inset 0 0 0 4px var(--gold);
   }
 
   .dot{
@@ -287,10 +291,18 @@
   }
   .day-cell.today .dot{ display:none; }
 
-  /* ---------- Ca làm việc: tô màu cả ô — Ca Ngày kem, Ca Đêm oải hương ---------- */
-  .day-cell.shift-day{ background: var(--shift-day-bg); }
+  /* ---------- Ca làm việc: tô màu cả ô — Ca Ngày vàng hổ phách, Ca Đêm oải hương ---------- */
+  .day-cell.shift-day{
+    background: var(--shift-day-bg);
+    box-shadow: inset 0 0 0 1px var(--shift-day-border);
+  }
   .day-cell.shift-night{ background: var(--shift-night-bg); }
-  .day-cell.today{ background: var(--accent-red); }
+  .day-cell.shift-day.today{
+    box-shadow: inset 0 0 0 1px var(--shift-day-border), inset 0 0 0 2px var(--gold-dim);
+  }
+  .day-cell.shift-day.selected:not(.today){
+    box-shadow: inset 0 0 0 1px var(--shift-day-border), inset 0 0 0 2px var(--select-ring);
+  }
 
   .day-cell.shift-day .dot{ background: var(--shift-day-gold); }
   .day-cell.shift-day .dot.holiday{ background: var(--shift-day-holiday); }
@@ -306,7 +318,6 @@
     background: var(--term);
     opacity: 0.9;
   }
-  .day-cell.today.term-start::before{ background: rgba(255,255,255,0.85); }
 
   /* ---------- Legend ---------- */
   .legend{
@@ -345,10 +356,13 @@
   /* ---------- Chi tiết ngày (hiện cố định bên dưới) ---------- */
   .day-detail{
     margin-top: 14px;
-    background: var(--surface);
-    border: 1px solid var(--line);
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    backdrop-filter: blur(22px) saturate(140%);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius);
     padding: 16px 20px 18px;
+    box-shadow: 0 10px 30px rgba(42,38,32,0.06);
   }
 
   .detail-weekday{
@@ -466,9 +480,61 @@
     color: var(--accent-red);
   }
 
+  /* ---------- Giao diện máy tính: ô ngày thấp và rộng hơn ---------- */
+  @media (min-width: 720px){
+    .app{ max-width: 860px; padding-left: 28px; padding-right: 28px; }
+    .grid{ grid-auto-rows: minmax(44px, auto); gap: 6px; }
+    .day-cell{ padding: 8px 12px 7px; border-radius: 14px; }
+    .day-cell .solar{ font-size: 16px; }
+    .day-cell .lunar{ font-size: 12px; }
+    .day-detail{ max-width: 640px; margin-left:auto; margin-right:auto; }
+  }
+
+  @media (min-width: 1000px){
+    .app{ max-width: 1040px; }
+    .grid{ grid-auto-rows: minmax(50px, auto); gap: 7px; }
+    .day-cell{ padding: 9px 14px 8px; }
+    .day-cell .solar{ font-size: 17px; }
+  }
+
+  /* ---------- Giao diện máy tính: chia 2 cột — trái lịch, phải chi tiết ngày ---------- */
+  @media (min-width: 900px){
+    .app{
+      display:grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      grid-template-rows: auto auto 1fr auto auto;
+      grid-template-areas:
+        "header  detail"
+        "weekday detail"
+        "grid    detail"
+        "legend  detail"
+        "footer  footer";
+      column-gap: 32px;
+      align-items: start;
+    }
+    header{ grid-area: header; }
+    .weekday-row{ grid-area: weekday; }
+    .grid{ grid-area: grid; }
+    .legend{ grid-area: legend; justify-content: flex-start; }
+    footer{ grid-area: footer; margin-top: 24px; }
+
+    .day-detail{
+      grid-area: detail;
+      max-width: none;
+      margin: 0;
+      margin-left: 0;
+      margin-right: 0;
+      position: sticky;
+      top: 20px;
+      align-self: start;
+    }
+  }
+
   @media (max-width: 340px){
     .month-title{ font-size: 19px; }
     .day-cell .solar{ font-size:14.5px; }
+    .nav-buttons{ gap: 4px; }
+    .nav-buttons .nav-btn.shift-btn{ padding: 0 8px 0 7px; font-size: 12px; gap: 4px; }
   }
 
   /* ---------- Đi đến ngày (bottom sheet) ---------- */
@@ -740,6 +806,10 @@
     <div class="month-row">
       <div class="month-title" id="monthTitle">Tháng <span class="year">2026</span></div>
       <div class="nav-buttons">
+        <div class="nav-btn shift-btn" id="shiftBtn" aria-label="Đổi ca ngày/đêm" title="Đổi ca ngày/đêm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          <span class="shift-btn-label" id="shiftBtnLabel">Đổi ca</span>
+        </div>
         <div class="nav-btn" id="prevBtn" aria-label="Tháng trước">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </div>
@@ -755,10 +825,6 @@
       <span class="caption-text" id="lunarCaptionText">Tháng âm lịch</span>
       <div class="caption-buttons">
         <div class="nav-btn today-btn" id="todayNavBtn" aria-label="Về hôm nay">Hôm nay</div>
-        <div class="nav-btn shift-btn" id="shiftBtn" aria-label="Đảo ca ngày/đêm" title="Đảo ca ngày/đêm">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-          <span class="shift-btn-label" id="shiftBtnLabel">Đảo ca</span>
-        </div>
         <div class="nav-btn goto-btn" id="gotoBtn" aria-label="Đổi ngày">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="16" rx="2"/><path d="M7 2v4M13 2v4M3 9h14"/><path d="M17 13l4 3-4 3"/></svg>
           <span class="goto-btn-label">Đổi ngày</span>
@@ -804,7 +870,7 @@
     </div>
   </div>
 
-  <footer>Lịch âm dương lịch Việt Nam</footer>
+  <footer>Lịch Samju - Đức Trung</footer>
 </div>
 
 <div class="goto-backdrop" id="gotoBackdrop"></div>
@@ -856,7 +922,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
       <span>Về ứng dụng</span>
     </div>
-    <div class="settings-block-desc" style="margin-bottom:0;">Lịch âm dương lịch Việt Nam — xem ngày âm, ngày lễ, can chi, giờ hoàng đạo theo từng ngày.</div>
+    <div class="settings-block-desc" style="margin-bottom:0;">Lịch Samju — xem ngày âm, ngày lễ, can chi, giờ hoàng đạo theo từng ngày.</div>
   </div>
 </div>
 
@@ -1359,7 +1425,7 @@ const shiftBtnLabel = document.getElementById('shiftBtnLabel');
 function updateShiftBtnUI(){
   shiftBtn.classList.toggle('active', shiftReversed);
   shiftBtn.setAttribute('aria-pressed', String(shiftReversed));
-  shiftBtnLabel.textContent = shiftReversed ? 'Đã đảo ca' : 'Đảo ca';
+  shiftBtnLabel.textContent = shiftReversed ? 'Đã đổi ca' : 'Đổi ca';
 }
 shiftBtn.addEventListener('click', () => {
   shiftReversed = !shiftReversed;
@@ -1603,7 +1669,7 @@ function renderInstallSection(){
   if (isStandalone()){
     installTitle.textContent = 'Đã cài đặt';
     installDesc.textContent = 'Ứng dụng đang chạy ở chế độ độc lập trên thiết bị này.';
-    installContent.innerHTML = `<div class="install-status">${checkIconSvg}<span>Bạn đã cài Lịch Âm vào máy</span></div>`;
+    installContent.innerHTML = `<div class="install-status">${checkIconSvg}<span>Bạn đã cài Lịch Samju vào máy</span></div>`;
     return;
   }
 
@@ -1622,7 +1688,7 @@ function renderInstallSection(){
   if (platformType === 'android'){
     installTitle.textContent = 'Cài đặt ứng dụng (Android)';
     if (deferredInstallPrompt){
-      installDesc.textContent = 'Cài Lịch Âm như một ứng dụng, dùng được cả khi mất mạng.';
+      installDesc.textContent = 'Cài Lịch Samju như một ứng dụng, dùng được cả khi mất mạng.';
       installContent.innerHTML = `<button type="button" class="install-btn" id="androidInstallBtn">Cài đặt ứng dụng</button>`;
       document.getElementById('androidInstallBtn').addEventListener('click', async () => {
         if (!deferredInstallPrompt) return;
@@ -1646,7 +1712,7 @@ function renderInstallSection(){
   // Desktop
   if (deferredInstallPrompt){
     installTitle.textContent = 'Cài đặt ứng dụng';
-    installDesc.textContent = 'Cài Lịch Âm như một ứng dụng trên máy tính.';
+    installDesc.textContent = 'Cài Lịch Samju như một ứng dụng trên máy tính.';
     installContent.innerHTML = `<button type="button" class="install-btn" id="desktopInstallBtn">Cài đặt ứng dụng</button>`;
     document.getElementById('desktopInstallBtn').addEventListener('click', async () => {
       if (!deferredInstallPrompt) return;

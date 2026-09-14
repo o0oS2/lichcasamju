@@ -1,6 +1,6 @@
 {
-  "name": "Lịch Âm Việt Nam",
-  "short_name": "Lịch Âm",
+  "name": "Lịch Samju",
+  "short_name": "Lịch Samju",
   "description": "Xem ngày âm lịch, ngày lễ và can chi theo từng ngày.",
   "start_url": "./index.html",
   "scope": "./",
